@@ -1,27 +1,28 @@
-document.getElementById("generate").addEventListener("click", async () => {
-  const topic = document.getElementById("input").value;
-  const output = document.getElementById("output");
+const generateBtn = document.getElementById('generateBtn');
+const topicInput = document.getElementById('topic');
+const outputDiv = document.getElementById('output');
 
-  output.innerHTML = "Sedang membuat artikel...";
+generateBtn.addEventListener('click', async () => {
+  const topic = topicInput.value.trim();
+  if (!topic) {
+    alert('Masukkan topik artikel dulu!');
+    return;
+  }
 
-  const apiKey = "ISI_API_KEY_KAMU_DI_SINI";
+  outputDiv.textContent = "Sedang menghasilkan artikel... ⏳";
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "Kamu pembuat artikel profesional." },
-        { role: "user", content: `Buat artikel tentang: ${topic}` }
-      ]
-    })
-  });
+  try {
+    // Ganti URL ini dengan endpoint serverless yang memanggil OpenAI API
+    const response = await fetch('https://your-backend-api.example.com/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: topic })
+    });
 
-  const data = await response.json();
-
-  output.innerHTML = data.choices[0].message.content;
+    const data = await response.json();
+    outputDiv.textContent = data.text || "Tidak ada hasil dari AI.";
+  } catch (error) {
+    console.error(error);
+    outputDiv.textContent = "Terjadi kesalahan. Cek console.";
+  }
 });
